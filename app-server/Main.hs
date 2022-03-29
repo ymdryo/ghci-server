@@ -26,19 +26,14 @@ import Network.GRPC.LowLevel.Server
 import GHC.IO.Exception
 
 main :: IO ()
-main = do
+main = void do
    (ghci, loads) <- startGhciProcess
       (proc "stack" ["ghci", "--ghci-options", "-fdiagnostics-color=always"])
       (\_ _ -> pure ())
    
    commandInProgress <- newTVarIO False
 
-   -- server <- newEmptyTMVarIO
-   cancelTMVar <- newEmptyTMVarIO
-
-   let stopServer' =
-         -- stopServer =<< atomically (readTMVar server)
-         atomically $ putTMVar cancelTMVar ()
+   stopServerTMVar <- newEmptyTMVarIO
 
    let
       handlers :: GhciService ServerRequest ServerResponse
@@ -74,8 +69,7 @@ main = do
                                  writeIORef grpcError $ Just e
                               Right () -> pure ()
             
-            execute `catch` \UnexpectedExit{} -> do
-               stopServer'
+            execute `catch` \UnexpectedExit{} -> atomically $ putTMVar stopServerTMVar ()
 
             atomically $ writeTVar commandInProgress False
 
@@ -88,6 +82,4 @@ main = do
 
    grpcServer <- async $ ghciServiceServer handlers defaultServiceOptions
 
-   atomically $ takeTMVar cancelTMVar
-   cancel grpcServer
-   wait grpcServer
+   waitEitherCancel grpcServer =<< async (atomically $ takeTMVar stopServerTMVar)
