@@ -43,7 +43,7 @@ library:
   source-dirs: src
 
 executables:
-  ghci-server-exe:
+  ghci-server:
     main:                Main.hs
     source-dirs:         app-server
     ghc-options:
@@ -53,7 +53,7 @@ executables:
     dependencies:
     - ghci-server
   
-  ghci-client-exe:
+  ghci-client:
     main:                Main.hs
     source-dirs:         app-client
     ghc-options:
