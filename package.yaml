@@ -1,7 +1,7 @@
 name:                ghci-server
 version:             0.1.0.0
 github:              "githubuser/ghci-server"
-license:             BSD3
+license:             AGPL-3.0-or-later
 author:              "Author name here"
 maintainer:          "example@example.com"
 copyright:           "2022 Author name here"
