@@ -14,18 +14,3 @@ message ExecuteResponse {
    string output = 1;
    uint64 fd = 2;
 }
-
-/*
-message ExecutionFailed {
-   oneof caused {
-      GhciError ghci_error = 1;
-      CommandAlreadyInProgressError command_already_in_progress = 1;
-   }
-}
-
-message GhciError {
-   string error_message = 1;
-}
-
-message CommandAlreadyInProgressError {}
-*/
