@@ -24,12 +24,19 @@ import Data.Functor
 import qualified Data.Text.Encoding as BS
 import Network.GRPC.LowLevel.Server
 import GHC.IO.Exception
+import System.IO (hFlush, stdout, stderr, hPutStrLn)
 
 main :: IO ()
 main = void do
    (ghci, loads) <- startGhciProcess
       (proc "stack" ["ghci", "--ghci-options", "-fdiagnostics-color=always"])
-      (\_ _ -> pure ())
+       \stream output -> do
+         let h = case stream of
+               Stdout -> stdout
+               Stderr -> stderr
+
+         hPutStrLn h output
+         hFlush h
    
    commandInProgress <- newTVarIO False
 
